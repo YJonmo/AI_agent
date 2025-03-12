@@ -73,7 +73,7 @@ souce .my_vent/bin/activate
 pip install -r requirements.txt
 ```
 
-3. Get an API key from [Nvidia website](https://build.nvidia.com/mistralai/mixtral-8x7b-instruct?snippet_tab=Python&signin=true&api_key=true) and place it in the src/agent.py:
+3. Get an API key from [Nvidia website](https://build.nvidia.com/mistralai/mixtral-8x7b-instruct?snippet_tab=Python&signin=true&api_key=true) and place it in the ```src/agent.py```:
 ```bash
 os.environ["NVIDIA_API_KEY"] = "your-api-key-here" 
 ```
