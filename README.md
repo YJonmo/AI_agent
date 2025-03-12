@@ -3,6 +3,7 @@
 <img src="./assets/AgentDiagram.jpg" alt="Agent Architecture Diagram" width="600" height="350">
 <div align="left">
 
+[![Watch the video](./assets/SampleRun.webm)]
 
 
 # AI Agent with Image Classification and Wikipedia Search tools
@@ -32,21 +33,21 @@ This repository contains a FastAPI-based AI assistant that combines chat capabil
 ```bash
 project_root/
 │
-├── app/
-│   ├── src/
-│   │   ├── __init__.py
-│   │   ├── agent.py
-│   │   ├── utils.py
-│   │   └── templates/
-│   │       └── indexes.html
-│   ├── weights/
-│   │   ├── __init__.py 
-│   │   └── cifar_model.py        
 ├── assets/
+│   ├── SampleRun.webm
 │   └── AgentDiagram.jpg    
 ├── data/
 │   ├── test_image1.jpeg
 │   └── test_image2.jpeg
+├── src/
+│   ├── src/
+│   ├── __init__.py
+│   ├── agent.py
+│   ├── utils.py
+│   └── templates/
+│       └── indexes.html
+│── weights/
+│   └── cifar_model.py        
 ├── README.md
 ├── Dockerfile
 └── requirements.txt
@@ -70,12 +71,17 @@ souce .my_vent/bin/activate
 pip install -r requirements.txt
 ```
 
-3. Run the agent locally:
+3. Get an API key from [Nvidia website](https://build.nvidia.com/mistralai/mixtral-8x7b-instruct?snippet_tab=Python&signin=true&api_key=true) and place it in the src/agent.py:
+```bash
+os.environ["NVIDIA_API_KEY"] = "your-api-key-here" 
+```
+
+4.Run the agent locally:
 ```bash
 uvicorn src.agent:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-4. Open a web browser at:
+5. Open a web browser at:
 ```bash
 http://0.0.0.0:8080/
 ```

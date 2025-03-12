@@ -20,6 +20,7 @@ from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
 from wikipedia import summary
 from PIL import Image
+from langchain.chains import LLMMathChain
 
 from .utils import (
     cifar_transforms,
@@ -30,7 +31,8 @@ from .utils import (
 
 app = FastAPI()
 
-os.environ["NVIDIA_API_KEY"] = "your-api-key-here"  # Replace with your actual API key
+os.environ["NVIDIA_API_KEY"] = "your-api-key-here"  # Replace it with your actual API key obtained from:
+# https://build.nvidia.com/mistralai/mixtral-8x7b-instruct?snippet_tab=Python&signin=true&api_key=true
 
 # Load the correct JSON Chat Prompt from the hub
 prompt = hub.pull("hwchase17/structured-chat-agent")
@@ -38,20 +40,14 @@ prompt = hub.pull("hwchase17/structured-chat-agent")
 # Initialize a Chat model
 llm = ChatNVIDIA(model="mistralai/mixtral-8x7b-instruct-v0.1")
 
-
-class CalculatorTool(BaseTool):
-    name:str = "CalculatorTool"
-    description:str = """
-        Useful for when you need to answer questions about math.
-        This tool is only for math questions and nothing else.
-        Formulate the input as python code.
-    """
-    def _run(self, question: str, **kwargs):
-        return eval(question)
-    def _arun(self, value: int| float):
-        raise NotImplementedError("This tool does not support async")
-
-
+llm_math = LLMMathChain.from_llm(llm=llm)
+def calculator_tool_wrapper(input_text: str) -> str:
+    try:
+        result = llm_math.run(input_text)
+        return str(result)  # Convert the output to a string
+    except Exception as e:
+        return f"Error: {str(e)}"
+    
 class SearchWikipedia(BaseTool):
     name:str = "Wikipedia"
     description:str = """
@@ -83,7 +79,6 @@ async def image_classifier(file: UploadFile = File(...))->str:
 
 tools = [
     SearchWikipedia(),
-    CalculatorTool(),
     Tool(
         name="ImageClassifier",
         func=image_classifier,
@@ -91,20 +86,19 @@ tools = [
             Explain in one sentence what you see in the image.
             Only use this tool when an image was uploaded.
         """,
-    )
+    ),
+    Tool(
+        name="Calculator",
+        func=calculator_tool_wrapper,
+        description="""
+            Useful for when you need to answer questions about math.
+            This tool is only for math questions and nothing else.
+            Formulate the input as python code.
+        """,
+    ),
 ]
 
-
-def update_chat_history(input:str, ai_message:str)-> list:
-    chat_history.append(HumanMessage(content=input))
-    chat_history.append(AIMessage(content=ai_message))
-    return chat_history
-    
-chat_history = []  # Collect chat history here (a sequence of messages)
-
-
 agent = create_structured_chat_agent(llm=llm, tools=tools, prompt=prompt)
-
 agent_executor = AgentExecutor.from_agent_and_tools(
     agent=agent,
     tools=tools,
@@ -112,9 +106,11 @@ agent_executor = AgentExecutor.from_agent_and_tools(
     handle_parsing_errors=True,  # Handle any parsing errors gracefully
 )
 
-initial_message = "You are an AI assistant that can provide helpful answers using available tools.\nIf you are unable to answer, you can use the following tools: Calculator, image classifier, and Wikipedia."
-chat_history = update_chat_history("", initial_message)
 
+chat_history = []  # Collect chat history here (a sequence of messages)
+initial_message = "You are an AI assistant that can provide helpful answers using available tools.\nIf you are unable to answer, you can use the following tools: Calculator, image classifier, and Wikipedia."
+chat_history.append(HumanMessage(content=""))
+chat_history.append(AIMessage(content=initial_message))
 
 
 templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
@@ -129,11 +125,7 @@ async def read_root(request: Request):
 async def chat(request: Request):
     data = await request.json()
     message = data["message"]
-    # chat = ChatNVIDIA(temperature=0.7)
-
-    # response = chat(chat_history)
     response = agent_executor.invoke({"input": message, "chat_history": chat_history})
-    print(f"#########{response=}")
 
     chat_history.append(HumanMessage(content=message))
     chat_history.append(AIMessage(content=str(response['output'])))
