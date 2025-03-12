@@ -1,4 +1,4 @@
-# pillow
+pillow
 fastapi
 python-multipart
 uvicorn
