@@ -10,6 +10,11 @@ This repository contains a FastAPI-based AI assistant that combines chat capabil
 - Wikipedia search integration
 - Web-based UI using FastAPI and Jinja2 templates
 
+```markdown
+![Alt Text](AgentDiagram.jpeg)
+```
+
+
 ## Prerequisites
 
 - Python 3.10+
