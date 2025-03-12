@@ -10,10 +10,6 @@ This repository contains a FastAPI-based AI assistant that combines chat capabil
 - Wikipedia search integration
 - Web-based UI using FastAPI and Jinja2 templates
 
-```markdown
-![Alt Text](AgentDiagram.jpg)
-```
-
 
 ## Prerequisites
 
@@ -25,8 +21,8 @@ This repository contains a FastAPI-based AI assistant that combines chat capabil
 - Uvicorn
 - Wikipedia
 
+## Project Structor
 ```bash
-/project folder
 project_root/
 │
 ├── app/
@@ -46,6 +42,10 @@ project_root/
 ├── Dockerfile
 ├── AgentDiagram.jpg
 └── requirements.txt
+```
+
+```markdown
+![Agent Architecture Diagram](AgentDiagram.jpg)
 ```
 
 ## Installation
