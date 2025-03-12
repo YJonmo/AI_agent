@@ -1,3 +1,10 @@
+<a name="top"></a>
+<div align="center">
+<img src="./assets/AgentDiagram.jpg" alt="Agent Architecture Diagram" width="600" height="350">
+<div align="left">
+
+
+
 # AI Agent with Image Classification and Wikipedia Search tools
 
 This repository contains a FastAPI-based AI assistant that combines chat capabilities with image classification. The assistant uses the Mixtral-8x7B model from NVIDIA AI and includes tools for calculations, Wikipedia searches, and image classification.
@@ -5,7 +12,7 @@ This repository contains a FastAPI-based AI assistant that combines chat capabil
 ## Features
 
 - Interactive chat interface
-- Image classification using CIFAR model to classify: plane, car, bird, cat, deed, dog, frog, horse, ship, truck
+- Image classification using Resnet18 encoder to classify: plane, car, bird, cat, deed, dog, frog, horse, ship, truck
 - Calculator functionality
 - Wikipedia search integration
 - Web-based UI using FastAPI and Jinja2 templates
@@ -34,19 +41,17 @@ project_root/
 │   │       └── indexes.html
 │   ├── weights/
 │   │   ├── __init__.py 
-│   │   └── cifar_model.py            
+│   │   └── cifar_model.py        
+├── assets/
+│   └── AgentDiagram.jpg    
 ├── data/
 │   ├── test_image1.jpeg
 │   └── test_image2.jpeg
 ├── README.md
 ├── Dockerfile
-├── AgentDiagram.jpg
 └── requirements.txt
 ```
 
-```markdown
-![Agent Architecture Diagram](AgentDiagram.jpg)
-```
 
 ## Installation
 
