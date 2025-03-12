@@ -1,14 +1,16 @@
-<a name="top"></a>
-<div align="center">
-<img src="./assets/AgentDiagram.jpg" alt="Agent Architecture Diagram" width="600" height="350">
-<div align="left">
-
-[![Watch the video](./assets/SampleRun.gif)]
-
-
 # AI Agent with Image Classification and Wikipedia Search tools
 
-This repository contains a FastAPI-based AI assistant that combines chat capabilities with image classification. The assistant uses the Mixtral-8x7B model from NVIDIA AI and includes tools for calculations, Wikipedia searches, and image classification.
+This repository contains a FastAPI-based AI agent that combines chat capabilities with image classification. The assistant uses the Mixtral-8x7B model from NVIDIA AI and includes tools for calculations, Wikipedia searches, and image classification.
+
+## Diagram
+<a name="top"></a>
+<img src="./assets/AgentDiagram.jpg" alt="Agent Architecture Diagram" width="400" height="220">
+<div align="left">
+
+## Sample run demo
+<img src="./assets/SampleRun.gif" width="400" height="400" alt="Watch the video">
+<div align="left">
+
 
 ## Features
 
