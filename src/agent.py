@@ -4,16 +4,14 @@ import torch
 from typing import Union
 
 from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 
-from dotenv import load_dotenv
 from langchain import hub
 from langchain.agents import AgentExecutor, create_structured_chat_agent
-from langchain.memory import ConversationBufferMemory
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.tools import BaseTool
 
@@ -27,16 +25,12 @@ from .utils import (
     cifar_transforms,
     cifar_model,
     cifar_classes,
-    pneumonia_transforms,
-    pneumonia_model,
-    pneumonia_classes,
     device
 )
 
 app = FastAPI()
 
-# Load environment variables from .env file
-load_dotenv()
+os.environ["NVIDIA_API_KEY"] = "your-api-key-here"  # Replace with your actual API key
 
 # Load the correct JSON Chat Prompt from the hub
 prompt = hub.pull("hwchase17/structured-chat-agent")
@@ -73,74 +67,32 @@ class SearchWikipedia(BaseTool):
             return f"I couldn't find any information on that. Here is the error message {e}"
 
 
-# class PneumoniaClassifier(BaseTool):
-#     name:str = "PneumoniaClassifier"
-#     description:str = """
-#         Classifies an image as either normal or pneumonia.
-#         Use this tool when you need to classify an image as either normal or pneumonia.
-#         Only use this tool when an image was uploaded. 
-#         If the not pneumonia detected, then say not detected. 
-#     """
-#     def _run(self, file: UploadFile = File(...)):
-#         # Read and preprocess the image
-#         content = file.read()
-#         image = Image.open(io.BytesIO(content))
-#         print(f"%%%%%%%%%%%%%%%%%%%%%{image.size=}")
-#         input_tensor = pneumonia_transforms(image).to(DEVICE)
-
-#         # Perform inference
-#         with torch.no_grad():
-#             output = pneumonia_model(input_tensor)
-#             _, predicted = torch.max(output, 1)
-#             predicted = pneumonia_classes[predicted]
-#         # Return the classification result
-#         return JSONResponse(content={"diagnostic result": predicted})
-    
-
-@app.post("/pneumonia_classifier/")
-async def pneumonia_classifier(file: UploadFile = File(...))->str:
+@app.post("/image_classifier/")
+async def image_classifier(file: UploadFile = File(...))->str:
     # Read and preprocess the image
     content = await file.read()
     image = Image.open(io.BytesIO(content))
-    input_tensor = pneumonia_transforms(image).to(device)
-
-    # Perform inference
+    input_tensor = cifar_transforms(image).to(device)
     with torch.no_grad():
-        output = pneumonia_model(input_tensor)
+        output = cifar_model(input_tensor)
         _, predicted = torch.max(output, 1)
-        predicted = pneumonia_classes[predicted]
-    # Return both the raw prediction and a formatted response for the chat model
-    # result = {"diagnostic result": predicted}
-    chat_response = f"Based on the image analysis, the diagnostic result is: {predicted}. "
-    if predicted == "pneumonia":
-        chat_response += "The image shows signs consistent with pneumonia."
-    else:
-        input_tensor = cifar_transforms(image).to(device)
-        with torch.no_grad():
-            output = cifar_model(input_tensor)
-            _, predicted = torch.max(output, 1)
-            predicted = cifar_classes[predicted]
-        chat_response += f"The ML model was not able to identify pneumonia. But it was able to detect {predicted} in the image."
+        predicted = cifar_classes[predicted]
+
+    chat_response = f"The ML model was able detect a {predicted} in the image."
     return chat_response
 
 tools = [
     SearchWikipedia(),
     CalculatorTool(),
-    # PneumoniaClassifier(),
     Tool(
-        name="PneumoniaClassifier",
-        func=pneumonia_classifier,
+        name="ImageClassifier",
+        func=image_classifier,
         description=""""
-            Classifies an image as either normal or pneumonia.
-            Only use this tool when an image was uploaded. 
-            If the not pneumonia detected, then say not detected. 
+            Explain in one sentence what you see in the image.
+            Only use this tool when an image was uploaded.
         """,
     )
 ]
-
-
-memory = ConversationBufferMemory(
-    memory_key="chat_history", return_messages=True)
 
 
 def update_chat_history(input:str, ai_message:str)-> list:
@@ -157,7 +109,6 @@ agent_executor = AgentExecutor.from_agent_and_tools(
     agent=agent,
     tools=tools,
     verbose=True,
-    memory=memory,  # Use the conversation memory to maintain context
     handle_parsing_errors=True,  # Handle any parsing errors gracefully
 )
 
@@ -189,4 +140,3 @@ async def chat(request: Request):
     return {"response": response['output']}
 
 
-# uvicorn 1_agent_react_chat_api:app --host 0.0.0.0 --port 8000 --reload

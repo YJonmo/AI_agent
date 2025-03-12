@@ -117,7 +117,7 @@
                 chatHistory.innerHTML += `<div class="user-message">You: Uploaded image: ${sanitizedFileName}</div>`;
 
                 try {
-                    const response = await fetch("/pneumonia_classifier/", {
+                    const response = await fetch("/image_classifier/", {
                         method: "POST",
                         body: formData
                     });
