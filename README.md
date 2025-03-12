@@ -3,7 +3,7 @@
 <img src="./assets/AgentDiagram.jpg" alt="Agent Architecture Diagram" width="600" height="350">
 <div align="left">
 
-[![Watch the video](./assets/SampleRun.webm)]
+[![Watch the video](./assets/SampleRun.gif)]
 
 
 # AI Agent with Image Classification and Wikipedia Search tools
