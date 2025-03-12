@@ -68,8 +68,8 @@ cd AI_agent
 
 2. Create a virtual env:
 ```bash
-python3 -m venv .my_venv
-souce .my_vent/bin/activate
+python -m venv .my_venv
+source .my_venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -80,7 +80,7 @@ os.environ["NVIDIA_API_KEY"] = "your-api-key-here"
 
 4.Run the agent locally:
 ```bash
-uvicorn src.agent:app --host 0.0.0.0 --port 8000 --reload
+uvicorn src.agent:app --host 0.0.0.0 --port 8080 --reload
 ```
 
 5. Open a web browser at:
