@@ -11,7 +11,7 @@ This repository contains a FastAPI-based AI assistant that combines chat capabil
 - Web-based UI using FastAPI and Jinja2 templates
 
 ```markdown
-![Alt Text](AgentDiagram.jpeg)
+![Alt Text](AgentDiagram.jpg)
 ```
 
 
@@ -44,6 +44,7 @@ project_root/
 │   └── test_image2.jpeg
 ├── README.md
 ├── Dockerfile
+├── AgentDiagram.jpg
 └── requirements.txt
 ```
 
