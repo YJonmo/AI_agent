@@ -78,7 +78,7 @@ pip install -r requirements.txt
 os.environ["NVIDIA_API_KEY"] = "your-api-key-here" 
 ```
 
-4.Run the agent locally:
+4. Run the agent locally:
 ```bash
 uvicorn src.agent:app --host 0.0.0.0 --port 8080 --reload
 ```
