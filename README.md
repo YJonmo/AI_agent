@@ -42,7 +42,6 @@ project_root/
 │   ├── test_image1.jpeg
 │   └── test_image2.jpeg
 ├── src/
-│   ├── src/
 │   ├── __init__.py
 │   ├── agent.py
 │   ├── utils.py
