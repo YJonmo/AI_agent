@@ -34,7 +34,7 @@ This repository contains a FastAPI-based AI agent that combines chat capabilitie
 - Uvicorn
 - Wikipedia
 
-## Project Structor
+## Project Structure
 ```bash
 project_root/
 │
